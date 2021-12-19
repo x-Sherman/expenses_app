@@ -100,6 +100,25 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Widget _buildLandscapeContent(){
+    return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text('Show chart',
+                style: Theme.of(context).textTheme.headline6,),
+                //Widget . adaptive - makes your UI adaptive depends on the platform (iOs/Android)
+                Switch.adaptive(
+                    activeColor: Theme.of(context).accentColor,
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() {
+                        _showChart = val;
+                      });
+                    }),
+              ],
+            );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isIOS = Platform.isIOS;
@@ -142,23 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          if (isLandscape)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('Show chart',
-                style: Theme.of(context).textTheme.headline6,),
-                //Widget . adaptive - makes your UI adaptive depends on the platform (iOs/Android)
-                Switch.adaptive(
-                    activeColor: Theme.of(context).accentColor,
-                    value: _showChart,
-                    onChanged: (val) {
-                      setState(() {
-                        _showChart = val;
-                      });
-                    }),
-              ],
-            ),
+          if (isLandscape) _buildLandscapeContent()
+            ,
           if (!isLandscape)
             Container(
                 //1st MediaQuery... - the size of our device
