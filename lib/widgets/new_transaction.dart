@@ -8,16 +8,47 @@ import 'package:intl/intl.dart';
 class NewTransaction extends StatefulWidget {
   final Function addTx;
 
-  NewTransaction(this.addTx);
+  NewTransaction(this.addTx) {
+    print('Constructor NewTransaction Widget');
+  }
 
   @override
-  State<NewTransaction> createState() => _NewTransactionState();
+  State<NewTransaction> createState() {
+    print('createState NewTransaction Widget');
+    return _NewTransactionState();
+  }
 }
 
 class _NewTransactionState extends State<NewTransaction> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
+
+  _NewTransactionState() {
+    print('Constructor NewTransaction State');
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    //best practice is use your code After super - but here we dont rly need any real code, jst watching Lifecycle
+    super.initState();
+    print('initState()');
+  }
+
+  @override
+  void didUpdateWidget(covariant NewTransaction oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    print('didUpdateWidget()');
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    print('dispose');
+  }
 
   void _submitData() {
     if (_amountController.text.isEmpty) {
@@ -26,8 +57,10 @@ class _NewTransactionState extends State<NewTransaction> {
     final enteredTitle = _titleController.text;
     final enteredAmount = double.parse(_amountController.text);
 
-    if (enteredTitle.isEmpty || enteredAmount is !double || enteredAmount <= 0 || _selectedDate == null)
-      return;
+    if (enteredTitle.isEmpty ||
+        enteredAmount is! double ||
+        enteredAmount <= 0 ||
+        _selectedDate == null) return;
 
     widget.addTx(
       enteredTitle,
@@ -96,7 +129,6 @@ class _NewTransactionState extends State<NewTransaction> {
                     ],
                   ),
                 ),
-                
                 ElevatedButton(
                   //new recommended Button
                   child: Text('Add Transaction'),
