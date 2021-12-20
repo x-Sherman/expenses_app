@@ -100,23 +100,54 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Widget _buildLandscapeContent(){
-    return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('Show chart',
-                style: Theme.of(context).textTheme.headline6,),
-                //Widget . adaptive - makes your UI adaptive depends on the platform (iOs/Android)
-                Switch.adaptive(
-                    activeColor: Theme.of(context).accentColor,
-                    value: _showChart,
-                    onChanged: (val) {
-                      setState(() {
-                        _showChart = val;
-                      });
-                    }),
-              ],
-            );
+  List<Widget> _buildLandscapeContent(MediaQueryData mediaQuery,
+      PreferredSizeWidget appBar, Widget txListWidget) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            'Show chart',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          //Widget . adaptive - makes your UI adaptive depends on the platform (iOs/Android)
+          Switch.adaptive(
+              activeColor: Theme.of(context).accentColor,
+              value: _showChart,
+              onChanged: (val) {
+                setState(() {
+                  _showChart = val;
+                });
+              }),
+        ],
+      ),
+      _showChart
+          ? Container(
+              //1st MediaQuery... - the size of our device
+              //2nd MediaQuery...padding.top - size of the hardware elements like little topbar under the App
+              //if You use MediaQuery many times - much better to store it into var!!!
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.7,
+              child: Chart(_recentTransactions))
+          : txListWidget
+    ];
+  }
+
+  List<Widget> _buildPortraitContent(MediaQueryData mediaQuery,
+      PreferredSizeWidget appBar, Widget txListWidget) {
+    return [
+      Container(
+          //1st MediaQuery... - the size of our device
+          //2nd MediaQuery...padding.top - size of the hardware elements like little topbar under the App
+          height: (mediaQuery.size.height -
+                  appBar.preferredSize.height -
+                  mediaQuery.padding.top) *
+              0.3,
+          child: Chart(_recentTransactions)),
+      txListWidget
+    ];
   }
 
   @override
@@ -161,30 +192,11 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          if (isLandscape) _buildLandscapeContent()
-            ,
-          if (!isLandscape)
-            Container(
-                //1st MediaQuery... - the size of our device
-                //2nd MediaQuery...padding.top - size of the hardware elements like little topbar under the App
-                height: (mediaQuery.size.height -
-                        appBar.preferredSize.height -
-                        mediaQuery.padding.top) *
-                    0.3,
-                child: Chart(_recentTransactions)),
-          if (!isLandscape) txListWidget,
           if (isLandscape)
-            _showChart
-                ? Container(
-                    //1st MediaQuery... - the size of our device
-                    //2nd MediaQuery...padding.top - size of the hardware elements like little topbar under the App
-                    //if You use MediaQuery many times - much better to store it into var!!!
-                    height: (mediaQuery.size.height -
-                            appBar.preferredSize.height -
-                            mediaQuery.padding.top) *
-                        0.7,
-                    child: Chart(_recentTransactions))
-                : txListWidget
+            ..._buildLandscapeContent(mediaQuery, appBar, txListWidget),
+          //... - spread operator - transform the List of Widget to a Single widgets next to each other
+          if (!isLandscape)
+            ..._buildPortraitContent(mediaQuery, appBar, txListWidget),
         ],
       ),
     ));
